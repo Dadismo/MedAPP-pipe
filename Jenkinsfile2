@@ -24,12 +24,13 @@ pipeline {
         stage('Image build') {
             steps {
                 sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 905418196587.dkr.ecr.us-east-1.amazonaws.com'
-                sh 'docker build -t 905418196587.dkr.ecr.us-east-1.amazonaws.com/devops:IMG-V${BUILD_NUMBER} .'
+                sh 'docker build -t devops .'
             }
         }
 
-        stage('Push image') {
+        stage('Tag & Push image') {
             steps {
+                sh "docker tag devops:latest 905418196587.dkr.ecr.us-east-1.amazonaws.com/devops:IMG-V${BUILD_NUMBER}"
                 sh 'docker push 905418196587.dkr.ecr.us-east-1.amazonaws.com/devops:IMG-V${BUILD_NUMBER}'
             }
         }
