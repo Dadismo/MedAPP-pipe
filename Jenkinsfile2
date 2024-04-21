@@ -23,9 +23,12 @@ pipeline {
         //} 
         stage('Image build') {
             steps {
-                sh 'aws configure list'
-                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 905418196587.dkr.ecr.us-east-1.amazonaws.com'
-                sh 'docker build -t devops .'
+                // Get AWS credentials from Jenkins Credentials
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AKIA5FTZBIZV6LUFJMBS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                // Login to Docker with ECR credentials
+                    sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 905418196587.dkr.ecr.us-east-1.amazonaws.com'
+                    sh 'docker build -t devops .'
+                }
             }
         }
 
